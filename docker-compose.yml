@@ -1,0 +1,34 @@
+version: '3.2'
+
+services:
+    backend:
+        depends_on:
+            - db
+        build: .
+        environment:
+            - DEBUG=${BE_DEBUG}
+            - SECRET_KEY=${BE_SECRET_KEY}
+            - DB_HOST=${DB_HOST}
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_PORT=${DB_PORT}
+        volumes:
+            - ./app:/app
+        ports:
+            - "8000:8000"
+        stdin_open: true
+        tty: true
+        command: python manage.py runserver 0.0.0.0:8000
+
+    db:
+        image: postgres
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        volumes:
+            - multiple_auth:/var/lib/postgresql/data
+
+volumes:
+  multiple_auth:
